@@ -3,8 +3,10 @@ require_relative '../kara_int'
 
 class TestKaraInt < Test::Unit::TestCase
 
-  def test_kara_int_initialize_without_args
-    assert_instance_of KaraInt, KaraInt.new()
+  def test_kara_int_must_have_constructor_value
+    assert_raise ArgumentError, "Value must be given" do
+      KaraInt.new()
+    end
   end
 
   def test_kara_int_initialize_with_string_arg
@@ -14,20 +16,6 @@ class TestKaraInt < Test::Unit::TestCase
   def test_kara_int_raises_exception_with_int_arg
     assert_raise ArgumentError, "Must be of type string" do
       KaraInt.new(1)
-    end
-  end
-
-  def test_kara_int_can_set_n_with_string
-    test = KaraInt.new()
-    assert_nothing_raised ArgumentError, "Must be of type string" do
-      test.n = "1"
-    end
-  end
-
-  def test_kara_int_can_not_set_n_with_int
-    test = KaraInt.new()
-    assert_raise ArgumentError, "Must be of type string" do
-      test.n = 1
     end
   end
 
@@ -41,11 +29,6 @@ class TestKaraInt < Test::Unit::TestCase
     test = KaraInt.new("135")
     assert_instance_of Array, test.n
     assert_equal [1, 3, 5], test.n
-  end
-
-  def test_n_assessor_raises_error_if_nil
-    test = KaraInt.new()
-    assert_raise(RuntimeError, "KaraInt#n is undefined") { test.n }
   end
 
   def test_addition_works_with_small_inputs_1_and_3
@@ -88,6 +71,43 @@ class TestKaraInt < Test::Unit::TestCase
     a = KaraInt.new("4")
     b = KaraInt.new("2")
     assert_equal "2", a - b
+  end
+
+  def test_subtraction_works_with_double_digit_numbers
+    a = KaraInt.new("44")
+    b = KaraInt.new("20")
+    assert_equal "24", a - b
+  end
+
+  def test_subtraction_works_with_double_digit_then_single_digit
+    a = KaraInt.new("44")
+    b = KaraInt.new("2")
+    assert_equal "42", a - b
+  end
+
+  def test_can_give_negative_number
+    a = KaraInt.new("-5")
+    assert_equal [5], a.n
+  end
+
+  def test_have_negative_sign_if_given_negative_number
+    a = KaraInt.new("-5")
+    assert_equal :negative, a.sign
+  end
+
+  def test_have_positive_sign_if_given_positive_number
+    a = KaraInt.new("5")
+    assert_equal :positive, a.sign
+  end
+
+  def test_only_allow_sign_at_beginning_of_number
+    assert_raise ArgumentError, "Invalid number" do
+      KaraInt.new("5-5")
+    end
+  end
+
+  def test_can_add_numbers_inline
+    assert_equal "5", KaraInt.new("1") + KaraInt.new("4")
   end
 
 end
