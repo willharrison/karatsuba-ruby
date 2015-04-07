@@ -6,8 +6,10 @@ class KaraInt
   attr_reader :sign
 
   def initialize(value = nil)
-    @sign = :positive
-    self.n = value
+    valid? value
+    @n = value.chars.map(&:to_i) 
+    @sign = :negative if negative? value
+    @sign = :positive unless negative? value
   end
 
   def valid?(value)
@@ -19,18 +21,7 @@ class KaraInt
   end
 
   def negative?(value)
-    true if @n.first == 0
-  end
-
-  def set_negative!
-    @sign = :negative
-    @n.shift
-  end
-
-  def n=(value)
-    valid? value
-    @n = value.chars.map(&:to_i) 
-    set_negative! if negative? value
+    true if value.chars.first =~ /-/
   end
 
   def +(other)
@@ -43,19 +34,39 @@ class KaraInt
       i -= 10 if i > 9
       result.unshift i
     end
-    result.shift if result[0] == 0
+    result.shift while result[0] == 0
     result.join('')
   end
 
   def -(other)
-    [@n, other.n].pad_multi! [@n.size, other.n.size].max + 1
-    result = []
-    @n.each_with_index do |item, index|
-      current = -1 * (index + 1)
-      result.unshift @n[current] - other.n[current]
+    x, y = @n, other.n
+    if x.size < y.size
+      x, y = y, x
+      @sign = :negative
+    elsif x.size == y.size
+      x.each_with_index do |item, index|
+        if x[index] < y[index]
+          x, y = y, x
+          @sign = :negative
+          break
+        end
+      end
     end
-    result.shift if result[0] == 0
-    result.join('')
+    [@n, other.n].pad_multi! [@n.size, other.n.size].max + 1
+    result, carry = [], 0
+    x.each_with_index do |item, index|
+      current = -1 * (index + 1)
+      a, b = x[current] - carry, y[current]
+      carry = 0
+      carry = 1 if b > a
+      a += 10 if b > a
+      i = a - b
+      result.unshift i
+    end
+    result.shift while result[0] == 0
+    result.unshift '-' if @sign == :negative
+    result = result.join('')
+    result
   end
 
 end
