@@ -26,9 +26,6 @@ class TestKaraInt < Test::Unit::TestCase
   end
 
   def test_n_accessor_returns_correct_array_representation
-    test = KaraInt.new("135")
-    assert_instance_of Array, test.n
-    assert_equal [1, 3, 5], test.n
   end
 
   def test_addition_works_with_small_inputs_1_and_3
@@ -85,11 +82,6 @@ class TestKaraInt < Test::Unit::TestCase
     assert_equal "42", a - b
   end
 
-  def test_can_give_negative_number
-    a = KaraInt.new("-5")
-    assert_equal [5], a.n
-  end
-
   def test_have_negative_sign_if_given_negative_number
     a = KaraInt.new("-5")
     assert_equal :negative, a.sign
@@ -108,6 +100,18 @@ class TestKaraInt < Test::Unit::TestCase
 
   def test_can_add_numbers_inline
     assert_equal "5", KaraInt.new("1") + KaraInt.new("4")
+  end
+
+  def test_can_subtract_single_digit_numbers_to_produce_negative
+    assert_equal "-5", KaraInt.new("1") - KaraInt.new("6")
+  end
+
+  def test_can_subtract_double_digit_numbers_to_produce_negative
+    assert_equal "-5", KaraInt.new("10") - KaraInt.new("15")
+  end
+
+  def test_can_subtract_57_and_95
+    assert_equal "-38", KaraInt.new("57") - KaraInt.new("95")
   end
 
 end
