@@ -9,6 +9,10 @@ class TestKaraInt < Test::Unit::TestCase
     end
   end
 
+  def test_kara_int_can_be_converted_to_string
+    assert_equal "0", KaraInt.new("0").to_s
+  end
+
   def test_kara_int_initialize_with_string_arg
     assert_instance_of KaraInt, KaraInt.new("1")
   end

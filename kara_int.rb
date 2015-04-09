@@ -2,6 +2,7 @@ require_relative './array'
 
 class KaraInt 
 
+  @@multiply_algorithm = nil
   attr_reader :n
   attr_reader :sign
 
@@ -10,6 +11,10 @@ class KaraInt
     @n = value.chars.map(&:to_i) 
     @sign = :negative if negative? value
     @sign = :positive unless negative? value
+  end
+
+  def self.multiply_algorithm=(object)
+    @@multiply_algorithm = object
   end
 
   def valid?(value)
@@ -22,6 +27,10 @@ class KaraInt
 
   def negative?(value)
     true if value.chars.first =~ /-/
+  end
+
+  def *(other)
+    @@multiply_algorithm.calculate(self, other)
   end
 
   def +(other)
@@ -67,6 +76,10 @@ class KaraInt
     result.unshift '-' if @sign == :negative
     result = result.join('')
     result
+  end
+
+  def to_s
+    @n.join('')
   end
 
 end
